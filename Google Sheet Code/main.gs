@@ -42,6 +42,7 @@ function getService() {
   // Set the client ID and secret.
   .setClientId(CONFIG.CLIENT_ID)
   .setClientSecret(CONFIG.CLIENT_SECRET)
+  .setScope('fspt-r')
 
   // Set the name of the callback function that should be invoked to complete
   // the OAuth flow.
@@ -82,6 +83,12 @@ function reset() {
  ****/
 function showSidebar() {
   let service = getService();
+  if (service.hasAccess()) {
+    SpreadsheetApp.getUi().showSidebar(
+      HtmlService.createHtmlOutput('Authorized with Yahoo.').setTitle('Yahoo')
+    );
+    return;
+  }
   let authorizationUrl = service.getAuthorizationUrl();
   let template = HtmlService.createTemplate(
       '<a href="<?= authorizationUrl ?>" target="_blank">Authorize</a>. ' +
@@ -101,11 +108,13 @@ function setGameKey() {
   
   try {
     let response = UrlFetchApp.fetch(url, {
+      muteHttpExceptions: true,
       headers: {
         'Authorization': 'Bearer ' + service.getAccessToken()
       }
     });
-    
+    Logger.log(`game/nhl response ${response.getResponseCode()}: ${response.getContentText()}`);
+
     let json = xmlToJson(response.getContentText());
     let gameKey = json.fantasy_content.game.game_key.Text;
     Logger.log(JSON.stringify(json.fantasy_content));
