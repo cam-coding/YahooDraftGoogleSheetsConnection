@@ -2,7 +2,7 @@ let latestPick = 0;
 let previousPicks = [];
 
 function getDraftResults() {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.sheetId);
+  const spreadsheet = SpreadsheetApp.getActive();
   const draftResultsDataSheet = getOrCreateSheet(spreadsheet, "Draft Results");
   const teamsData = spreadsheet
     .getSheetByName("Teams")
@@ -53,7 +53,7 @@ function getOrCreateSheet(spreadsheet, sheetName) {
 function getDraftResultsFromYahoo() {
   const service = getService();
   if (service.hasAccess()) {
-    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${CONFIG.leagueId}/draftresults`;
+    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${getYearId()}.l.${CONFIG.leagueId}/draftresults`;
     try {
       const draftResponse = UrlFetchApp.fetch(url, {
         muteHttpExceptions: true,

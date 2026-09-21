@@ -1,16 +1,26 @@
 // the following are examples and should be replaced with real values
 const CONFIG = {
-  sheetId: "c78LW9a0-FZaujBzO-icOb9tCJ_rAxnYj0tG2TFHr0U",         // ID of the Spreadsheet (in the url)
   CLIENT_ID: "N34aCYpVlf2iXnDscAq5J9K5G7S0Y6an4ktFXBWoKLD0x6GiFpSJqeY9gRsHYG9uVBXjM2SPl6gKQprR",       // Yahoo client ID
   CLIENT_SECRET: "8FF835BAB8587BBC0F840269E5F0CCEF041BB83F",   // Yahoo client secret
   teamCount: 12,       // Number of teams in your league (not, no quotes here)
   leagueId: "1234",     // ID of you Yahoo league
 }
 
-let Logger = BetterLog.useSpreadsheet(CONFIG.sheetId);
+let Logger = BetterLog.useSpreadsheet(SpreadsheetApp.getActive().getId());
 
-// This will check to see if the yearId is saved to the PorpertiesService
-const yearId = checkGameKey()
+/**
+ * Adds the Yahoo menu when the sheet is opened
+ */
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("Yahoo")
+    .addItem("Authorize", "showSidebar")
+    .addItem("Initialize league data", "initializeLeagueData")
+    .addSeparator()
+    .addItem("Start draft polling", "createDraftTimeTriggers")
+    .addItem("Stop draft polling", "deleteDraftTimeTriggers")
+    .addToUi();
+}
 
 /**
  * Initializes the League data
@@ -104,16 +114,17 @@ function setGameKey() {
     scriptProperties.setProperty('yearId', gameKey);
     
     console.log(`GameKey is ${gameKey}`);
+    return gameKey;
   } catch(e) {
     Logger.log(e);
   }
 }
 
 /*
-* Gets the year ID (game_key) from Yahoo and sets it to a script property
-* This yearID changes every year
+* Returns the year ID (game_key), fetching it from Yahoo and saving it to a
+* script property if it isn't stored yet
 */
-function checkGameKey() {
+function getYearId() {
   try {
     let gameKey;
     let scriptProperties = PropertiesService.getScriptProperties();

@@ -1,7 +1,7 @@
 function getPlayerData() {
   console.log("Getting all player data");
 
-  const ss = SpreadsheetApp.openById(CONFIG.sheetId);
+  const ss = SpreadsheetApp.getActive();
   let sheet = ss.getSheetByName("Player Data");
 
   if (!sheet) {
@@ -17,7 +17,7 @@ function getPlayerData() {
     let maxCount = 1200;
     while (fetchedPlayerCount <= maxCount) {
       let count = 100;
-      const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${CONFIG.leagueId}/players;sort=AR;start=${fetchedPlayerCount};count=${count}`;
+      const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${getYearId()}.l.${CONFIG.leagueId}/players;sort=AR;start=${fetchedPlayerCount};count=${count}`;
 
       try {
         const response = UrlFetchApp.fetch(url, {

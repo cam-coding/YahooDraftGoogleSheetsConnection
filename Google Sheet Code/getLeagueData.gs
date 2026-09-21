@@ -4,7 +4,7 @@
 function getLeagueData() {
   console.log("Getting league data");
 
-  const ss = SpreadsheetApp.openById(CONFIG.sheetId);
+  const ss = SpreadsheetApp.getActive();
   let leagueDataSheet = ss.getSheetByName("League Data");
 
   if (!leagueDataSheet) {
@@ -14,7 +14,7 @@ function getLeagueData() {
   if (service.hasAccess()) {
     try {
       leagueDataSheet.clearContents();
-      const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${CONFIG.leagueId}`;
+      const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${getYearId()}.l.${CONFIG.leagueId}`;
       const response = UrlFetchApp.fetch(url, {
         headers: {
           Authorization: `Bearer ${service.getAccessToken()}`,

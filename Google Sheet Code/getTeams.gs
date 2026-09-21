@@ -4,7 +4,7 @@
 function getTeams() {
   console.log("Getting Teams data");
 
-  const ss = SpreadsheetApp.openById(CONFIG.sheetId);
+  const ss = SpreadsheetApp.getActive();
   let sheet = ss.getSheetByName("Teams");
 
   if (!sheet) {
@@ -24,7 +24,7 @@ function getTeams() {
       "teamManager",
     ]);
 
-    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${CONFIG.leagueId}/teams`;
+    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${getYearId()}.l.${CONFIG.leagueId}/teams`;
 
     try {
       const response = UrlFetchApp.fetch(url, {
