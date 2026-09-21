@@ -1,0 +1,1 @@
+=ISNUMBER(MATCH($A2, INDIRECT("'Draft Results'!C:C"), 0))
