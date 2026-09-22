@@ -1,0 +1,35 @@
+<input id="search" type="text" placeholder="Type a player name..."
+  style="width:100%;box-sizing:border-box;padding:6px;font-size:14px;">
+<ul id="results" style="list-style:none;padding:0;margin-top:8px;"></ul>
+
+<script>
+  const input = document.getElementById('search');
+  const list = document.getElementById('results');
+  let debounceTimer;
+
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(runSearch, 150);
+  });
+
+  function runSearch() {
+    google.script.run.withSuccessHandler(renderResults).searchUndraftedPlayers(input.value);
+  }
+
+  function renderResults(players) {
+    list.innerHTML = '';
+    players.forEach((p) => {
+      const li = document.createElement('li');
+      li.textContent = p.name;
+      li.style.padding = '6px';
+      li.style.cursor = 'pointer';
+      li.style.borderBottom = '1px solid #eee';
+      li.onclick = () => {
+        google.script.run.withSuccessHandler(runSearch).markPlayerTaken(p.row);
+      };
+      list.appendChild(li);
+    });
+  }
+
+  runSearch();
+</script>
